@@ -42,6 +42,7 @@ class AZeldaBOTWCharacter : public ACharacter
 
 public:
 	AZeldaBOTWCharacter();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 	bool isHoldingWeapon;
 	
 

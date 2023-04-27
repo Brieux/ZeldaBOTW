@@ -86,7 +86,7 @@ void AZeldaBOTWCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZeldaBOTWCharacter::Look);
 
 		//Use Weapon
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AZeldaBOTWCharacter::Attack);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AZeldaBOTWCharacter::Attack);
 
 	}
 
@@ -130,13 +130,12 @@ void AZeldaBOTWCharacter::Look(const FInputActionValue& Value)
 
 void AZeldaBOTWCharacter::Attack(void)
 {
-	printf("Hello");
-
+	
 	if (isHoldingWeapon) {
-		printf("Hello");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("I Have weapon")));
 	}
 	else {
-		printf("prout");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Turquoise, FString::Printf(TEXT("I don't have weapon")));
 	}
 }
 
