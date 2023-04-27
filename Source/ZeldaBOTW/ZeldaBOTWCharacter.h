@@ -59,9 +59,8 @@ public:
 
 	bool CantAttack;
 	bool CanMove;
-
 	UFUNCTION()
-		void AllowAttackAndMove(void);
+		void AllowAttackAndMove();
 	
 
 protected:

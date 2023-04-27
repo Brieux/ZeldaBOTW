@@ -57,6 +57,8 @@ AZeldaBOTWCharacter::AZeldaBOTWCharacter()
 	Epee = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Epee"));
 	Epee->SetupAttachment(GetMesh(), TEXT("SwordHolder"));
 
+	GetCharacterMovement()->bAllowPhysicsRotationDuringAnimRootMotion = 0;
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -140,10 +142,14 @@ void AZeldaBOTWCharacter::Look(const FInputActionValue& Value)
 void AZeldaBOTWCharacter::Attack(void)
 {
 	if (isHoldingWeapon && (CantAttack == false)) {
-		GetMesh()->GetAnimInstance()->Montage_Play(AnimToPlay[FMath::RandRange(0, 3)],1.f, EMontagePlayReturnType::Duration,0.f,true);
+		GetMesh()->GetAnimInstance()->Montage_Play(AnimToPlay[FMath::RandRange(0, 4)],1.f, EMontagePlayReturnType::Duration,0.f,true);
 		CantAttack = true;
 		CanMove = false;
-		GetMesh()->GetAnimInstance()->OnPlayMontageNotifyBegin.AddDynamic(this, &AZeldaBOTWCharacter::AllowAttackAndMove);
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUFunction(this, TEXT("AllowAttackAndMove"));
+
+		GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(EndDelegate);
+		
 
 	}
 	else {
@@ -151,7 +157,7 @@ void AZeldaBOTWCharacter::Attack(void)
 	}
 }
 
-void AZeldaBOTWCharacter::AllowAttackAndMove(void) {
+void AZeldaBOTWCharacter::AllowAttackAndMove() {
 	CantAttack = false;
 	CanMove = true;
 }
