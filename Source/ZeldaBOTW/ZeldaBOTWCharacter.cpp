@@ -48,6 +48,15 @@ AZeldaBOTWCharacter::AZeldaBOTWCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	isHoldingWeapon = false;
+	DammageToDeal;
+	DurabilityInSword;
+	AnimToPlay;
+	CantAttack = false;
+	CanMove = true;
+
+	Epee = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Epee"));
+	Epee->SetupAttachment(GetMesh(), TEXT("SwordHolder"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -97,7 +106,7 @@ void AZeldaBOTWCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && CanMove)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -130,15 +139,22 @@ void AZeldaBOTWCharacter::Look(const FInputActionValue& Value)
 
 void AZeldaBOTWCharacter::Attack(void)
 {
-	
-	if (isHoldingWeapon) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("I Have weapon")));
+	if (isHoldingWeapon && (CantAttack == false)) {
+		GetMesh()->GetAnimInstance()->Montage_Play(AnimToPlay[FMath::RandRange(0, 3)],1.f, EMontagePlayReturnType::Duration,0.f,true);
+		CantAttack = true;
+		CanMove = false;
+		GetMesh()->GetAnimInstance()->OnPlayMontageNotifyBegin.AddDynamic(this, &AZeldaBOTWCharacter::AllowAttackAndMove);
+
 	}
 	else {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Turquoise, FString::Printf(TEXT("I don't have weapon")));
 	}
 }
 
+void AZeldaBOTWCharacter::AllowAttackAndMove(void) {
+	CantAttack = false;
+	CanMove = true;
+}
 
 
 

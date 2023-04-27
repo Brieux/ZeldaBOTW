@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Components/StaticMeshComponent.h"
 #include "ZeldaBOTWCharacter.generated.h"
 
 
@@ -40,10 +41,27 @@ class AZeldaBOTWCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AttackAction;
 
+	
+
+
 public:
 	AZeldaBOTWCharacter();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 	bool isHoldingWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Epee;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		float DammageToDeal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		float DurabilityInSword;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlay;
+
+	bool CantAttack;
+	bool CanMove;
+
+	UFUNCTION()
+		void AllowAttackAndMove(void);
 	
 
 protected:
