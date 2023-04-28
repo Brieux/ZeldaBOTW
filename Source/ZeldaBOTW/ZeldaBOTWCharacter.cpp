@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Misc/App.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -50,10 +51,23 @@ AZeldaBOTWCharacter::AZeldaBOTWCharacter()
 	isHoldingWeapon = false;
 	DammageToDeal;
 	DurabilityInSword;
-	AnimToPlay;
+	AnimToPlayCombo01;
+	AnimToPlayCombo02;
+	AnimToPlayCombo03;
+	AnimToPlayCombo04;
+	AnimToPlayCombo05;
+	AnimToPlayCombo06;
+	ComboUsed;
+	indexToPlay = 0;
 	CantAttack = false;
 	CanMove = true;
+	ComboToChoose = true;
 
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("/Script/Engine.SkeletalMesh'/Game/_Global/Characters/Mannequin_UE4/Meshes/SKM_UE4.SKM_UE4'"));
+	GetMesh()->SetSkeletalMesh(MeshAsset.Object,false);
+
+
+	//Sword Apply
 	Epee = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Epee"));
 	Epee->SetupAttachment(GetMesh(), TEXT("SwordHolder"));
 
@@ -67,7 +81,7 @@ void AZeldaBOTWCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	Epee->SetupAttachment(GetMesh(), TEXT("SwordHolder"));
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -121,6 +135,8 @@ void AZeldaBOTWCharacter::Move(const FInputActionValue& Value)
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement 
+		//SpeedForward = SpeedForward + (FApp::GetDeltaTime() * 50);
+		
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -142,24 +158,61 @@ void AZeldaBOTWCharacter::Look(const FInputActionValue& Value)
 void AZeldaBOTWCharacter::Attack(void)
 {
 	if (isHoldingWeapon && (CantAttack == false)) {
-		GetMesh()->GetAnimInstance()->Montage_Play(AnimToPlay[FMath::RandRange(0, 4)],1.f, EMontagePlayReturnType::Duration,0.f,true);
+
+		//ChooseComboToPerform
+		if (ComboToChoose == true) {
+			ComboToChoose = false;
+			int chooseComboInt = FMath::RandRange(0, 5);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Combo to perform %d"), chooseComboInt));
+			switch(chooseComboInt) {
+				case (0):
+					ComboUsed = AnimToPlayCombo01;
+					break;
+				case (1):
+					ComboUsed = AnimToPlayCombo02;
+					break;
+				case (2):
+					ComboUsed = AnimToPlayCombo03;
+					break;
+				case (3):
+					ComboUsed = AnimToPlayCombo04;
+					break;
+				case (4):
+					ComboUsed = AnimToPlayCombo05;
+					break;
+				case (5):
+					ComboUsed = AnimToPlayCombo06;
+					break;
+				default:
+					ComboUsed = AnimToPlayCombo01;
+					break;
+			}
+				
+		}
+		//PlayMontage
+		GetMesh()->GetAnimInstance()->Montage_Play(ComboUsed[indexToPlay],1.f, EMontagePlayReturnType::Duration,0.f,true);
+		
+		//BlockInput
 		CantAttack = true;
 		CanMove = false;
+
+		//DelegateOnBlendOut
 		FOnMontageEnded EndDelegate;
 		EndDelegate.BindUFunction(this, TEXT("AllowAttackAndMove"));
-
-		GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(EndDelegate);
+		GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(EndDelegate);
 		
 
-	}
-	else {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Turquoise, FString::Printf(TEXT("I don't have weapon")));
 	}
 }
 
 void AZeldaBOTWCharacter::AllowAttackAndMove() {
 	CantAttack = false;
 	CanMove = true;
+	indexToPlay += 1;
+	if (indexToPlay == ComboUsed.Num()) {
+		indexToPlay = 0;
+		ComboToChoose = true;
+	}
 }
 
 

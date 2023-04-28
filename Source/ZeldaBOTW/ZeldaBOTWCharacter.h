@@ -48,17 +48,32 @@ public:
 	AZeldaBOTWCharacter();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 	bool isHoldingWeapon;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* Epee;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 		float DammageToDeal;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 		float DurabilityInSword;
+	bool ComboToChoose;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
-		TArray<UAnimMontage*> AnimToPlay;
+		TArray<UAnimMontage*> AnimToPlayCombo01;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlayCombo02;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlayCombo03;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlayCombo04;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlayCombo05;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> AnimToPlayCombo06;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+		TArray<UAnimMontage*> ComboUsed;
+	int indexToPlay;
 
 	bool CantAttack;
 	bool CanMove;
+
 	UFUNCTION()
 		void AllowAttackAndMove();
 	
