@@ -54,7 +54,9 @@ public:
 		float DammageToDeal;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 		float DurabilityInSword;
+
 	bool ComboToChoose;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 		TArray<UAnimMontage*> AnimToPlayCombo01;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
@@ -69,6 +71,7 @@ public:
 		TArray<UAnimMontage*> AnimToPlayCombo06;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
 		TArray<UAnimMontage*> ComboUsed;
+
 	int indexToPlay;
 
 	bool CantAttack;
